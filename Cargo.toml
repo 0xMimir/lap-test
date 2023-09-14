@@ -1,0 +1,12 @@
+[package]
+name = "lap-test"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+diesel = { version = "2.1.1", features = ["uuid", "postgres"] }
+fake = { version = "2.8.0", features = ["uuid", "derive"] }
+length_aware_paginator = { path = "length_aware_paginator" }
+uuid = { version = "1.4.1", features = ["v4"] }
