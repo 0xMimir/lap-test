@@ -1,12 +1,10 @@
 mod schema;
 use diesel::{
-    debug_query, insert_into,
-    pg::{Pg, PgConnection},
-    prelude::Insertable,
-    Connection, ExpressionMethods, QueryDsl, Queryable, RunQueryDsl,
+    insert_into, pg::PgConnection, prelude::Insertable, Connection, QueryDsl, Queryable,
+    RunQueryDsl,
 };
 use fake::{Dummy, Fake, Faker};
-use length_aware_paginator::{Paginate, Response};
+use length_aware_paginator::Paginate;
 use schema::users;
 use std::env;
 use uuid::Uuid;
@@ -44,23 +42,22 @@ fn main() {
 
     let mut connection = get_connection();
     // let query = users::table.count();
+    //
+    // let query = users::table.filter(users::username.eq("nesto")).count();
+    //
+    // println!("{}", debug_query::<Pg, _>(&query));
 
-    let query = users::table.filter(users::username.eq("nesto")).count();
-
-    println!("{}", debug_query::<Pg, _>(&query));
-
-    let response= users::table
+    let response = users::table
         .into_boxed()
         .page(Some(20))
-        // .per_page(Some(10))
-        // .paginate::<User>(&mut connection)
-        // .unwrap();
-        ;
+        .per_page(Some(10))
+        .paginate::<User>(&mut connection)
+        .unwrap();
 
-    println!("{}", debug_query(&response));
-    // println!("Items: {}", response.data.len());
-    // println!("Page: {}", response.page);
-    // println!("Per page: {}", response.per_page);
-    // println!("Total: {}", response.total);
-    // println!("Last page: {}", response.last_page);
+    // println!("{}", debug_query(&response));
+    println!("Items: {}", response.data.len());
+    println!("Page: {}", response.page);
+    println!("Per page: {}", response.per_page);
+    println!("Total: {}", response.total);
+    println!("Last page: {}", response.last_page);
 }
