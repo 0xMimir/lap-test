@@ -1,7 +1,7 @@
 mod schema;
 use diesel::{
-    insert_into, pg::PgConnection, prelude::Insertable, Connection, QueryDsl, Queryable,
-    RunQueryDsl,
+    debug_query, insert_into, pg::PgConnection, prelude::Insertable, Connection, QueryDsl,
+    Queryable, RunQueryDsl,
 };
 use fake::{Dummy, Fake, Faker};
 use length_aware_paginator::Paginate;
@@ -38,7 +38,7 @@ fn seed() {
 }
 
 fn main() {
-    // seed();
+    seed();
 
     let mut connection = get_connection();
     // let query = users::table.count();
@@ -47,14 +47,11 @@ fn main() {
     //
     // println!("{}", debug_query::<Pg, _>(&query));
 
-    let response = users::table
-        .into_boxed()
-        .page(Some(20))
-        .per_page(Some(10))
-        .paginate::<User>(&mut connection)
-        .unwrap();
+    let response = users::table.into_boxed().page(Some(20)).per_page(Some(10));
+    println!("{}", debug_query(&response));
+    let response = response.paginate::<User>(&mut connection).unwrap();
 
-    // println!("{}", debug_query(&response));
+
     println!("Items: {}", response.data.len());
     println!("Page: {}", response.page);
     println!("Per page: {}", response.per_page);
